@@ -2,7 +2,26 @@ package main
 
 import (
 	"fmt"
+	"net/http"
 )
+
+func main() {
+	http.HandleFunc("/lab1/", parse)
+	http.ListenAndServe(":8080", nil)
+}
+
+func parse(w http.ResponseWriter, r *http.Request) {
+
+	r.ParseForm()
+	headerContentTtype := r.Header.Get("Content-Type")
+	if headerContentTtype != "application/x-www-form-urlencoded" {
+		w.WriteHeader(http.StatusUnsupportedMediaType)
+		return
+	}
+	str := r.Form.Get("str")
+
+	fmt.Println("Ответ: ", pal(str))
+}
 
 func pal(st string) bool {
 	result1 := []byte{}
@@ -19,8 +38,4 @@ func pal(st string) bool {
 	}
 
 	return string(result1) == string(result2)
-}
-
-func main() {
-	fmt.Println(pal("qwertytrwq"))
 }
